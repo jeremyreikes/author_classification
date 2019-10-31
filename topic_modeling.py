@@ -2,6 +2,7 @@ import gensim
 from gensim.test.utils import common_texts
 from gensim.corpora.dictionary import Dictionary
 from gensim.utils import simple_preprocess
+import re
 
 
 def sent_to_words(sentences):
@@ -19,7 +20,7 @@ def get_topics(num_topics, sentences):
     curr_corpus = [common_dictionary.doc2bow(text) for text in data_words]
     lda.update(curr_corpus)
     vectors = []
-    for doc in other_corpus:
+    for doc in curr_corpus:
         vector = lda[doc]
         vectors.append(vector)
     top_topics = []
@@ -27,4 +28,5 @@ def get_topics(num_topics, sentences):
         top_topic = sorted(vector, key = lambda x: x[1], reverse=True)[0]
         top_topics.append(top_topic)
     topic_numbers = [topic[0] if (abs(topic[1] - (1/num_topics)) >= .01) else -1 for topic in top_topics]
+
     return topic_numbers
