@@ -95,10 +95,6 @@ def get_new_topic_probs(df, lda_model):
 '''
 to get topic probs for train data, run train_topic_probs.  Then pass in the lda_model for the train topic probs
 '''
-df = pd.read_csv('train.csv')
-train_topic_probs, lda_model = get_topic_probs(df)
-import numpy as np
-np.sqrt(train_topic_probs)
-# train_topic_probs
-# for topic in train_topic_probs:
+# df = pd.read_csv('train.csv')
+# train_topic_probs, lda_model = get_topic_probs(df)
 # new_topic_probs = get_new_topic_probs(val_df, lda_model)
