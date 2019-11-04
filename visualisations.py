@@ -1,21 +1,29 @@
 import pandas as pd
 import spacy
-
+import pyLDAvis.gensim
+pyLDAvis.enable_notebook() # visualize
 import scattertext as st
-df = pd.read_csv('for_vis.csv')
-df = df.dropna()
-# df.drop('id', axis=1, inplace=Tru
-df.text.isna().sum()
+from topic_modeling import get_topics
 nlp = spacy.load('en')
-corpus = st.CorpusFromPandas(df.dropna(),
-                             category_col='author',
-                             text_col='text',
-                             nlp=nlp).build()
 
-html = st.produce_scattertext_explorer(corpus,
-                                       category='EAP')
-open("Author-Visualization.html", 'wb').write(html.encode('utf-8'))
+def create_scatterplot(df, return_corpus=False):
+    '''Creates an HTML file to visualize differences in corpora.'''
+    corpus = st.CorpusFromPandas(df,
+                                 category_col='author',
+                                 text_col='text',
+                                 nlp=nlp).build()
+    html = st.produce_scattertext_explorer(corpus,
+                                           category='EAP',
+                                           category_name='Edger Allen Poe',
+                                           not_category_name='HPL/MWS',
+                                           width_in_pixels=1000,
+                                           metadata=df['author'])
+    open("Author-Visualization.html", 'wb').write(html.encode('utf-8'))
 
-
-df.author
-df.text
+def create_pyLDAvis(df):
+    '''.ipynb enabled interactive topic-modeling visualization from pyLDAvis.'''
+    lda_model = get_topics(sentences = df.text.values.tolist(), num_topics = 4)
+    corpus = create_scatterplot(df, return_corpus=True)
+    vis = pyLDAvis.gensim.prepare(lda_model, corpus, dictionary=lda_model.id2word)
+    vis = create_pyLDAvis(df)
+    return vis
