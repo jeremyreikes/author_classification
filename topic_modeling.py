@@ -99,6 +99,7 @@ def get_new_topic_probs(df, lda_model):
 '''
 Run get_topic_probs to calculate topic probabilties for training data.
 Then pass in the lda_model created in get_topic_probs into get_new_topic_probs for test data.
+Example workflow below:
 '''
 # df = pd.read_csv('train.csv')
 # train_topic_probs, lda_model = get_topic_probs(df)
