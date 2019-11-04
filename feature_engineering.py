@@ -10,9 +10,9 @@ import copy
 import textstat
 nlp = spacy.load("en_core_web_lg")
 
-def prepare_data():
+def prepare_data(filename):
     '''Initializes DataFrame.'''
-    df = pd.read_csv('train.csv')
+    df = pd.read_csv(filename)
     df.drop('id', axis=1, inplace=True)
     new_cols = ['raw_text_length', 'num_words', 'avg_word_len', 'vector_avg', 'polarity', 'subjectivity', 'dale_chall', 'rhyme_frequency', 'FleischReadingEase', 'lexicon', 'word_diversity']
     false_cols = ['starts_conj', 'ends_prep', 'has_colon', 'has_semicolon', 'has_dash', 'whom', 'has_had', 'num_ings']
@@ -93,7 +93,7 @@ def add_features(row):
 
 def process_training_data():
     '''Engineers features and performs train test split.'''
-    data = prepare_data()
+    data = prepare_data('train.csv')
     df = data.apply(lambda x: add_features(x), axis=1)
     df['vector_avg'] = df['vector_avg'] - df['vector_avg'].min()
     df['FleischReadingEase'] = df['FleischReadingEase'] - df['FleischReadingEase'].min()
@@ -105,3 +105,15 @@ def process_training_data():
     full_df = pd.concat([df, pd.DataFrame(cv_transformed)], axis=1)
     processed_data = train_test_split(full_df.drop(['author', 'lemmas', 'entities'], axis=1), full_df.author.values, test_size=0.1, random_state=0)
     return processed_data # in form X_train, X_val, y_train, y_val
+
+def process_test_data(lda_model, cv):
+    data = prepare_data('test.csv')
+    df = data.apply(lambda x: add_features(x), axis=1)
+    df['vector_avg'] = df['vector_avg'] - df['vector_avg'].min()
+    df['FleischReadingEase'] = df['FleischReadingEase'] - df['FleischReadingEase'].min()
+    topic_probs = get_new_topic_probs(df, lda_model)
+    df = pd.concat([df, topic_probs], axis=1)
+    cv_transformed = cv.transform(df.text).toarray()
+    full_df = pd.concat([df, pd.DataFrame(cv_transformed)], axis=1)
+    test_df = full_df.drop(['author', 'lemmas', 'entities', 'text'], axis=1)
+    return test_df
