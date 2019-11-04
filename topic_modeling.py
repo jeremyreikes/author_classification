@@ -22,8 +22,8 @@ stop_words.extend(['from', 'subject', 're', 'use', 'not', 'would', 'say', 'could
 def sent_to_words(sentences):
     '''Processes a list of sentences into a Gensim-friendly form.'''
     for sent in sentences:
-        sent = re.sub('\s+', ' ', sent)  # remove newline chars
-        sent = re.sub("\'", "", sent)  # remove single quotes
+        sent = re.sub('\s+', ' ', sent)
+        sent = re.sub("\'", "", sent)
         sent = simple_preprocess(str(sent), deacc=True)
         yield(sent)
 
@@ -78,9 +78,9 @@ def get_topic_probs(df):
         row = [0, 0, 0, 0]
         vector = lda_model[doc][0]
         for tup in vector:
-            row[tup[0]] = tup[1]
+            row[tup[0]] = np.sqrt(tup[1])
         topic_probs.append(row)
-    return np.sqrt(topic_probs), lda_model
+    return pd.DataFrame(topic_probs), lda_model
 
 def get_new_topic_probs(df, lda_model):
     '''Computes topic probabilites for new sentences in test data.'''
@@ -93,9 +93,9 @@ def get_new_topic_probs(df, lda_model):
         vector = lda_model[doc][0]
         row = [0, 0, 0, 0]
         for tup in vector:
-            row[tup[0]] = tup[1]
+            row[tup[0]] = np.sqrt(tup[1])
         topic_probs.append(row)
-    return np.sqrt(topic_probs)
+    return pd.DataFrame(topic_probs)
 '''
 Run get_topic_probs to calculate topic probabilties for training data.
 Then pass in the lda_model created in get_topic_probs into get_new_topic_probs for test data.
