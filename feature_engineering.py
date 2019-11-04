@@ -96,6 +96,7 @@ def process_training_data():
     data = prepare_data()
     df = data.apply(lambda x: add_features(x), axis=1)
     df['vector_avg'] = df['vector_avg'] - df['vector_avg'].min()
+    df['FleischReadingEase'] = df['FleischReadingEase'] - df['FleischReadingEase'].min()
     topic_probs, lda_model = get_topic_probs(df)
     df = pd.concat([df, topic_probs], axis=1)
     cv = CountVectorizer()
