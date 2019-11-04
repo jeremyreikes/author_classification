@@ -84,7 +84,7 @@ def get_topic_probs(df):
 
 def get_new_topic_probs(df, lda_model):
     '''Computes topic probabilites for new sentences in test data.'''
-    data_words = create_words(new_df)
+    data_words = create_words(df)
     data_ready = process_words(data_words)
     id2word = corpora.Dictionary(data_ready)
     new_corpus = [id2word.doc2bow(text) for text in data_ready]
