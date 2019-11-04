@@ -1,12 +1,14 @@
+'''
+Based on a Gensim implementation from 'https://www.machinelearningplus.com/nlp/topic-modeling-gensim-python/'
+Date Accessed: 10/12/2019
+'''
 import gensim
 from gensim.test.utils import common_texts
 from gensim.corpora.dictionary import Dictionary
 from gensim.utils import simple_preprocess, lemmatize
+import gensim.corpora as corpora
 import re
 from nltk.corpus import stopwords
-import gensim.corpora as corpora
-from gensim.models import CoherenceModel
-import matplotlib.pyplot as plt
 import pandas as pd
 import spacy
 import numpy as np
@@ -18,6 +20,7 @@ stop_words.extend(['from', 'subject', 're', 'use', 'not', 'would', 'say', 'could
                    'run', 'need', 'even', 'right', 'line', 'even', 'also', 'may', 'take', 'come'])
 
 def sent_to_words(sentences):
+    '''Processes a list of sentences into a Gensim-friendly form.'''
     for sent in sentences:
         sent = re.sub('\s+', ' ', sent)  # remove newline chars
         sent = re.sub("\'", "", sent)  # remove single quotes
@@ -25,15 +28,16 @@ def sent_to_words(sentences):
         yield(sent)
 
 def create_words(df):
+    '''Converts a Pandas DF into Gensim-friendly form.'''
     data = df.text.values.tolist()
     data_words = list(sent_to_words(data))
     return data_words
 
 def process_words(texts, stop_words=stop_words, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
-    """Remove Stopwords, Form Bigrams, Trigrams and Lemmatization"""
-    bigram = gensim.models.Phrases(texts, min_count=5, threshold=100) # higher threshold fewer phrases.
-    trigram = gensim.models.Phrases(bigram[texts], threshold=100)
+    """Remove Stopwords, Form Bigrams, Trigrams and Lemmatization."""
+    bigram = gensim.models.Phrases(texts, min_count=5, threshold=100)
     bigram_mod = gensim.models.phrases.Phraser(bigram)
+    trigram = gensim.models.Phrases(bigram[texts], threshold=100)
     trigram_mod = gensim.models.phrases.Phraser(trigram)
 
     texts = [[word for word in simple_preprocess(str(doc)) if word not in stop_words] for doc in texts]
@@ -44,11 +48,11 @@ def process_words(texts, stop_words=stop_words, allowed_postags=['NOUN', 'ADJ', 
     for sent in texts:
         doc = nlp(" ".join(sent))
         texts_out.append([token.lemma_ for token in doc if token.pos_ in allowed_postags])
-    # remove stopwords once more after lemmatization
     texts_out = [[word for word in simple_preprocess(str(doc)) if word not in stop_words] for doc in texts_out]
     return texts_out
 
 def model_lda(df):
+    '''Creates a LDA model and it's associated corpus.'''
     data_words = create_words(df)
     data_ready = process_words(data_words)
     id2word = corpora.Dictionary(data_ready)
@@ -66,6 +70,7 @@ def model_lda(df):
     return lda_model, corpus, data_ready
 
 def get_topic_probs(df):
+    '''Calculates the topic probabilities for each sentence in training data.'''
     lda_model, corpus, data_ready = model_lda(df)
     id2word = corpora.Dictionary(data_ready)
     topic_probs = list()
@@ -73,12 +78,12 @@ def get_topic_probs(df):
         row = [0, 0, 0, 0]
         vector = lda_model[doc][0]
         for tup in vector:
-
             row[tup[0]] = tup[1]
         topic_probs.append(row)
     return np.sqrt(topic_probs), lda_model
 
 def get_new_topic_probs(df, lda_model):
+    '''Computes topic probabilites for new sentences in test data.'''
     data_words = create_words(new_df)
     data_ready = process_words(data_words)
     id2word = corpora.Dictionary(data_ready)
@@ -90,10 +95,10 @@ def get_new_topic_probs(df, lda_model):
         for tup in vector:
             row[tup[0]] = tup[1]
         topic_probs.append(row)
-
     return np.sqrt(topic_probs)
 '''
-to get topic probs for train data, run train_topic_probs.  Then pass in the lda_model for the train topic probs
+Run get_topic_probs to calculate topic probabilties for training data.
+Then pass in the lda_model created in get_topic_probs into get_new_topic_probs for test data.
 '''
 # df = pd.read_csv('train.csv')
 # train_topic_probs, lda_model = get_topic_probs(df)
