@@ -1,4 +1,5 @@
 import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
 import spacy
 from textblob import TextBlob
@@ -9,6 +10,8 @@ import pronouncing
 import copy
 import textstat
 nlp = spacy.load("en_core_web_lg")
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
 
 def prepare_data(filename):
     '''Initializes DataFrame.'''
@@ -97,14 +100,15 @@ def process_training_data():
     df = data.apply(lambda x: add_features(x), axis=1)
     df['vector_avg'] = df['vector_avg'] - df['vector_avg'].min()
     df['FleischReadingEase'] = df['FleischReadingEase'] - df['FleischReadingEase'].min()
+    processed_data = train_test_split(df.drop(['author', 'lemmas', 'entities'], axis=1), full_df.author.values, test_size=0.2, random_state=0)
     topic_probs, lda_model = get_topic_probs(df)
     df = pd.concat([df, topic_probs], axis=1)
     cv = CountVectorizer()
     cv.fit(df.text)
     cv_transformed = cv.transform(df.text).toarray()
     full_df = pd.concat([df, pd.DataFrame(cv_transformed)], axis=1)
-    processed_data = train_test_split(full_df.drop(['author', 'lemmas', 'entities'], axis=1), full_df.author.values, test_size=0.1, random_state=0)
-    return processed_data # in form X_train, X_val, y_train, y_val
+    # processed_data = train_test_split(full_df.drop(['author', 'lemmas', 'entities'], axis=1), full_df.author.values, test_size=0.2, random_state=0)
+    return full_df # in form X_train, X_val, y_train, y_val
 
 def process_test_data(lda_model, cv):
     data = prepare_data('test.csv')
