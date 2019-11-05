@@ -4,10 +4,13 @@ A solution to [Kaggle's Spooky Author Identification Competition](https://www.ka
 ## The Problem
 Using horror stories from Edgar Allen Poe, Mary Shelley, and HP Lovecraft, build a model to predict the author of unseen sentences.  
 
-The dataset contained ~20,000 sentences from the three authors. The following interactive visualization we made with scattertext shows differences in corpora between Edgar Allen Poe and the other two authors.
+The dataset contained ~20,000 sentences from the three authors. The following  visualization we made with scattertext shows differences in corpora between Edgar Allen Poe and the other two authors.
+
+To view the interactive version, save the raw HTML from [here](https://github.com/jeremyreikes/author_classification/blob/master/Author-Visualization.html) and open in your favorite browser.
+
 ![scatterText visualization](scatter_text_vis.png)
 
-To view the interactive
+
 
 ## Evaluation
 Submissions are evaluated using a multi-class logarithmic loss function as follows as shown in [multi-class log-loss](https://www.kaggle.com/c/spooky-author-identification/overview/evaluation).
