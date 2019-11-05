@@ -8,4 +8,5 @@ Using horror stories from Edgar Allen Poe, Mary Shelley, and HP Lovecraft, build
 We leveraged popular NLP packages (Spacy, TextStat, TextBlob, and Gensim) to tokenize, vectorize, and parse the dataset.  
 We created natural language features based around word choice, sentence structure, grammar, tense, and more.
 
-## 
+##
+![Interactive scattertext visualization](scatter_text_vis.png)
