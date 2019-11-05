@@ -3,7 +3,7 @@ import spacy
 import pyLDAvis.gensim
 pyLDAvis.enable_notebook() # visualize
 import scattertext as st
-from topic_modeling import get_topics
+from topic_modeling import get_topic_probs
 nlp = spacy.load('en')
 
 def create_scatterplot(df, return_corpus=False):
@@ -12,6 +12,8 @@ def create_scatterplot(df, return_corpus=False):
                                  category_col='author',
                                  text_col='text',
                                  nlp=nlp).build()
+    if return_corpus:
+        return corpus
     html = st.produce_scattertext_explorer(corpus,
                                            category='EAP',
                                            category_name='Edger Allen Poe',
@@ -22,8 +24,6 @@ def create_scatterplot(df, return_corpus=False):
 
 def create_pyLDAvis(df):
     '''.ipynb enabled interactive topic-modeling visualization from pyLDAvis.'''
-    lda_model = get_topics(sentences = df.text.values.tolist(), num_topics = 4)
-    corpus = create_scatterplot(df, return_corpus=True)
-    vis = pyLDAvis.gensim.prepare(lda_model, corpus, dictionary=lda_model.id2word)
-    vis = create_pyLDAvis(df)
-    return vis
+    lda_model, corpus = get_topic_probs(df, for_vis=True)
+    pyLDAvis.gensim.prepare(lda_model, corpus, dictionary=lda_model.id2word)
+    # return vis

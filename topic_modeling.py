@@ -69,9 +69,11 @@ def model_lda(df):
 
     return lda_model, corpus, data_ready
 
-def get_topic_probs(df):
+def get_topic_probs(df, for_vis=False):
     '''Calculates the topic probabilities for each sentence in training data.'''
     lda_model, corpus, data_ready = model_lda(df)
+    if for_vis:
+        return lda_model, corpus
     id2word = corpora.Dictionary(data_ready)
     topic_probs = list()
     for doc in corpus:

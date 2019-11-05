@@ -13,10 +13,9 @@ nlp = spacy.load("en_core_web_lg")
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 
-def prepare_data(filename):
+def prepare_data(filename, test=False):
     '''Initializes DataFrame.'''
     df = pd.read_csv(filename)
-    df.drop('id', axis=1, inplace=True)
     new_cols = ['raw_text_length', 'num_words', 'avg_word_len', 'vector_avg', 'polarity', 'subjectivity', 'dale_chall', 'rhyme_frequency', 'FleischReadingEase', 'lexicon', 'word_diversity']
     false_cols = ['starts_conj', 'ends_prep', 'has_colon', 'has_semicolon', 'has_dash', 'whom', 'has_had', 'num_ings']
     empty_cols = ['entities', 'lemmas']
@@ -30,7 +29,9 @@ def prepare_data(filename):
     for pos in parts_of_speech:
         df[pos] = np.zeros(shape=(len(df),)).astype('uint8')
     encoder = LabelEncoder()
-    df['author'] = encoder.fit_transform(df.author.values)
+    if not test:
+        df['author'] = encoder.fit_transform(df.author.values)
+        df.drop('id', axis=1, inplace=True)
     return df
 
 
@@ -96,28 +97,7 @@ def add_features(row):
 
 # def process_training_data():
     '''Engineers features and performs train test split.'''
-data = prepare_data('train.csv')
-df = data.apply(lambda x: add_features(x), axis=1)
 
-df['vector_avg'] = df['vector_avg'] - df['vector_avg'].min()
-df['FleischReadingEase'] = df['FleischReadingEase'] - df['FleischReadingEase'].min()
-X_train, X_val, y_train, y_val = train_test_split(df.drop(['author', 'lemmas', 'entities'], axis=1), df.author.values, test_size=0.2, random_state=0)
-cv = CountVectorizer()
-cv.fit(X_train.text)
-cv_train = pd.DataFrame(cv.transform(X_train.text).toarray(), index=X_train.index)
-cv_val = pd.DataFrame(cv.transform(X_val.text).toarray(), index=X_val.index)
-
-X_train = pd.concat([X_train, cv_train], axis=1)
-X_val = pd.concat([X_val, cv_val], axis=1)
-topic_probs, lda_model = get_topic_probs(X_train)
-new_topic_probs = get_new_topic_probs(X_val, lda_model)
-topic_probs.index=X_train.index
-new_topic_probs.index=X_val.index
-
-X_train = pd.concat([X_train.drop('text', axis=1), topic_probs], axis=1)
-X_val = pd.concat([X_val.drop('text', axis=1), new_topic_probs], axis=1)
-X_val.isna().sum().sum()
-X_train.isna().sum().sum()
 def process_test_data(lda_model, cv):
     data = prepare_data('test.csv')
     df = data.apply(lambda x: add_features(x), axis=1)
@@ -129,27 +109,3 @@ def process_test_data(lda_model, cv):
     full_df = pd.concat([df, pd.DataFrame(cv_transformed)], axis=1)
     test_df = full_df.drop(['author', 'lemmas', 'entities', 'text'], axis=1)
     return test_df
-
-
-# full_df = process_training_data()
-
-
-
-
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-import numpy as np
-from sklearn.model_selection import train_test_split
-from xgboost import XGBClassifier
-clf = XGBClassifier()
-clf = LogisticRegression()
-len(X_train)
-clf.fit(X_train, y_train)
-predictions = clf.predict_proba(X_val)
-# for XGBoost all columns must be different names
-X_train.columns = list(range(len(X_train.columns)))
-X_val.columns = list(range(len(X_val.columns)))
-
-from sklearn.metrics import log_loss
-print(log_loss(y_val, predictions))
