@@ -7,6 +7,8 @@ Using horror stories from Edgar Allen Poe, Mary Shelley, and HP Lovecraft, build
 The dataset contained ~20,000 sentences from the three authors. The following interactive visualization we made with scattertext shows differences in corpora between Edgar Allen Poe and the other two authors.
 ![scatterText visualization](scatter_text_vis.png)
 
+To view the interactive
+
 ## Evaluation
 Submissions are evaluated using a multi-class logarithmic loss function as follows as shown in [multi-class log-loss](https://www.kaggle.com/c/spooky-author-identification/overview/evaluation).
 
@@ -34,7 +36,9 @@ Scikit-learn's built in TFIDF and CountVectorizer proved to be our most importan
 After removing stopwords and punctuation, the corpus left us with ~25,000 features for the count vectorizer.
 
 #### Topic Modeling
-We utilized Gensim for topic modeling and used Latent Dirichlet Allocation (LDA) to create model.  We added bigram and trigram models to capture patterns in each author's word usage.  The following image shows an interactive visualization for viewing differences between topics.  Our highest coherence score was obtained with 4 topics.
+We utilized Gensim for topic modeling and used Latent Dirichlet Allocation (LDA) to create our model.  We added bigram and trigram models to capture patterns in each author's word usage.  The following image shows a visualization for viewing differences between topics.
+
+To view the interactive version, download our repo and uncomment the lines at the end of [visualisations.py](https://github.com/jeremyreikes/author_classification/blob/master/visualisations.py) and run in a Python notebook.
 
 ![topicModeling visualization](topic_modeling_vis.png)
 
