@@ -26,4 +26,8 @@ def create_pyLDAvis(df):
     '''.ipynb enabled interactive topic-modeling visualization from pyLDAvis.'''
     lda_model, corpus = get_topic_probs(df, for_vis=True)
     pyLDAvis.gensim.prepare(lda_model, corpus, dictionary=lda_model.id2word)
-    # return vis
+    return vis
+
+# df = pd.read_csv('train.csv')
+# vis = create_pyLDAvis(df)
+# vis

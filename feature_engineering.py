@@ -94,18 +94,3 @@ def add_features(row):
     row['lexicon'] = textstat.lexicon_count(row['text'])
     row['word_diversity'] = row.lexicon/row.num_words
     return row
-
-# def process_training_data():
-    '''Engineers features and performs train test split.'''
-
-def process_test_data(lda_model, cv):
-    data = prepare_data('test.csv')
-    df = data.apply(lambda x: add_features(x), axis=1)
-    df['vector_avg'] = df['vector_avg'] - df['vector_avg'].min()
-    df['FleischReadingEase'] = df['FleischReadingEase'] - df['FleischReadingEase'].min()
-    topic_probs = get_new_topic_probs(df, lda_model)
-    df = pd.concat([df, topic_probs], axis=1)
-    cv_transformed = cv.transform(df.text).toarray()
-    full_df = pd.concat([df, pd.DataFrame(cv_transformed)], axis=1)
-    test_df = full_df.drop(['author', 'lemmas', 'entities', 'text'], axis=1)
-    return test_df
