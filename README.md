@@ -8,7 +8,7 @@ The dataset contained ~20,000 sentences from the three authors. The following in
 ![scatterText visualization](scatter_text_vis.png)
 
 ## Evaluation
-Submissions are evaluated using a multi-class logarithmic loss function as follows as shown in [multi-class log-loss]('https://www.kaggle.com/c/spooky-author-identification/overview/evaluation').
+Submissions are evaluated using a multi-class logarithmic loss function as follows as shown in [multi-class log-loss](https://www.kaggle.com/c/spooky-author-identification/overview/evaluation).
 
 ## Our Solution
 
@@ -35,9 +35,10 @@ After removing stopwords and punctuation, the corpus left us with ~25,000 featur
 
 #### Topic Modeling
 We utilized Gensim for topic modeling and used Latent Dirichlet Allocation (LDA) to create model.  We added bigram and trigram models to capture patterns in each author's word usage.  The following image shows an interactive visualization for viewing differences between topics.  Our highest coherence score was obtained with 4 topics.
+
 ![topicModeling visualization](topic_modeling_vis.png)
 
 #### Other metrics
 Our other features were obtained using a combination of Spacy, NLTK, TextBlob, and TextStat.
 
-### Modeling 
+### Modeling
