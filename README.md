@@ -16,8 +16,11 @@ To view the interactive version, save the raw HTML from [here](https://github.co
 Submissions are evaluated using a multi-class logarithmic loss function as follows as shown in [multi-class log-loss](https://www.kaggle.com/c/spooky-author-identification/overview/evaluation).
 
 ## Our Solution
+### Part 1: Naive NLP approaches and ensembling
+1. Find multiclass and multilabel classifications using TF-IDF vectorization with SVM and Multinomial Naive Bayes.
+2. Find Multiclass and multilabel classifications using tokenization and LSTM Neural Networks.
 
-### Feature Engineering
+### Part 2: Feature Engineering
 We leveraged popular NLP packages (Spacy, NLTK, TextStat, TextBlob, and Gensim) to tokenize, vectorize, and parse the dataset.
 
 We created natural language features based around many features such as the following:
@@ -33,10 +36,8 @@ We created natural language features based around many features such as the foll
 
 See our [feature engineering file](https://github.com/jeremyreikes/author_classification/blob/master/feature_engineering.py) for more info.
 
-#### TFIDF/Count Vectorizer
-Scikit-learn's built in TFIDF and CountVectorizer proved to be our most important feature.  Count Vectorizer performed slightly better so we implemented it instead of TFIDF for our final product.  
-
-After removing stopwords and punctuation, the corpus left us with ~25,000 features for the count vectorizer.
+#### TFIDF
+CountVectorizer proved to be our most important feature After removing stopwords and punctuation, the corpus left us with ~25,000 features for the count vectorizer.
 
 #### Topic Modeling
 We utilized Gensim for topic modeling and used Latent Dirichlet Allocation (LDA) to create our model.  We added bigram and trigram models to capture patterns in each author's word usage.  The following image shows a visualization for viewing differences between topics.
@@ -48,4 +49,5 @@ To view the interactive version, download our repo and uncomment the lines at th
 #### Other metrics
 Our other features were obtained using a combination of Spacy, NLTK, TextBlob, and TextStat.
 
-### Modeling
+### Final Modeling
+Multiclass classification using a multilayer perceptron.
