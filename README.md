@@ -50,4 +50,8 @@ To view the interactive version, download our repo and uncomment the lines at th
 Our other features were obtained using a combination of Spacy, NLTK, TextBlob, and TextStat.
 
 ### Final Modeling
-Multiclass classification using a multilayer perceptron.
+Broadly speaking, our model is a Multi-class classification using a multilayer perceptron.
+
+To accomplish this, we implemented an ada-boosted LSTM Neural-Network using Keras and an Scikit-Learn wrapper.
+
+By using both multi-nomial and binary classifications and averaging our resulting models (24 in total), we were able to obtain a multi-class logarithmic loss of .36.
